@@ -82,6 +82,42 @@ const getSchedule = async(req, res, next) =>{
     }
 
 }
+
+const getScheduleByType = async(req, res) =>{
+    const scheduleType = req.params.type;
+    
+    if(!scheduleType){
+        return res.status(422).json({
+            success: false,
+            message: 'Schedule Type is required',
+            
+        })
+    }
+    try{
+        const get_schedule = await schedule.findOne({scheduleFor: scheduleType});
+        if(get_schedule){
+            return res.status(200).json({
+                success: true,
+                message: 'Data successfully retrieved',
+                result: get_schedule
+            })
+        }
+        else{
+            return res.status(404).json({
+                success: false,
+                message: 'Unable to find schedule',
+                result: get_schedule
+            });
+        }
+    }
+    catch(err){
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to fetch schedule',
+            err,
+        });
+    }
+}
 const getAllSchedules = async(req, res, next) =>{
     try{
         const get_schedule = await schedule.find();
@@ -199,5 +235,5 @@ const deleteSchedule = async (req, res, next) =>{
 }
 
 module.exports = {
-    createSchedule, getAllSchedules, getSchedule, updateSchedule, deleteSchedule
+    createSchedule, getAllSchedules, getSchedule, updateSchedule, deleteSchedule, getScheduleByType
 }

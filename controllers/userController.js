@@ -105,6 +105,77 @@ const loginUser = async(req, res) =>{
     }
 }
 
+const getUsers = async(req, res) => {
+    try{
+        const get_user = await User.find();
+        if(get_user){
+            if(get_user.length === 0){
+                return res.status(403).json({
+                    success: true,
+                    message: 'No Data Available',                
+                })
+            }
+            else{
+            return res.status(200).json({
+                success: true,
+                message: 'Data successfully retrieved',
+                result: get_user
+            })
+        }
+        }
+        else{
+            return res.status(404).json({
+                success: false,
+                message: 'Unable to find User',
+                
+            });
+        }
+    }
+    catch(err){
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to fetch user',
+            err,
+        });
+    }
+}
+
+const get_a_user = async(req, res) => {
+
+    const userId = req.params.id;
+    if(!userId){
+        return res.status(422).json({
+            success: false,
+            message: 'User ID is required',
+            
+        })
+    }
+    try{
+        const get_user = await User.findOne({_id: userId});
+        if(get_user){
+            return res.status(200).json({
+                success: true,
+                message: 'Data successfully retrieved',
+                result: get_user
+            })
+        }
+        else{
+            return res.status(404).json({
+                success: false,
+                message: 'Unable to find user',
+                
+            });
+        }
+    }
+    catch(err){
+        return res.status(500).json({
+            success: false,
+            message: 'Unable to fetch user',
+            err,
+        });
+    }
+
+}
     module.exports = {
-        registerUser, loginUser
+        registerUser, loginUser, getUsers, get_a_user
     }
